@@ -1,0 +1,75 @@
+<?php
+/** @var \Razoyo\CarProfile\Block\Account\CarProfile $block */
+/** @var \Magento\Framework\Escaper $escaper */
+
+$carList = $block->getCarList();
+$carId = $block->getCarId()
+?>
+
+<form class="form-car-profile"
+      action="<?= $escaper->escapeUrl($block->getSaveUrl()) ?>"
+      method="post"
+      id="form-car-profile-validate"
+      data-hasrequired="<?= $escaper->escapeHtmlAttr(__('Required Fields')) ?>">
+    <fieldset class="fieldset">
+        <div class="field car-profile required">
+            <label class="label" for="car_profile">
+                <span><?= $escaper->escapeHtmlAttr(__('Select Car Profile')) ?></span>
+            </label>
+            <div class="control">
+                <select id="car_profile_id" name="car_profile_id"
+                        title="<?= $escaper->escapeHtmlAttr(__('Select Car Profile')) ?>"
+                        class="validate-select car_profile">
+                    <option value=""><?= $escaper->escapeHtml(__('Select Car Profile')) ?></option>
+                    <?php foreach($carList as $car): ?>
+                        <option <?= ($car['id'] == $carId) ? 'selected' : '' ?> value="<?= $car['id'] ?>">
+                            <?= $escaper->escapeHtml(__('%1 %2 %3', $car['year'], $car['make'], $car['model'])) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+    </fieldset>
+
+
+    <div class="actions-toolbar">
+        <div class="primary">
+            <button type="submit"
+                    class="action save primary"
+                    data-action="save-car-profile"
+                    title="<?= $escaper->escapeHtmlAttr(__('Save Car Profile')) ?>">
+                <span><?= $escaper->escapeHtml(__('Save Car Profile')) ?></span>
+            </button>
+        </div>
+    </div>
+</form>
+
+<?php if ($carId): ?>
+<div class="customer-car-profile">
+    <?php $car = $block->getCarById($carId); ?>
+    <div class="car-profile-container">
+        <div class="car-profile">
+            <img src="<?= $car['image'] ?>" alt="<?= $car['make'] ?>" class="car-image">
+            <div class="car-details">
+                <h2 class="car-title"><?= $car['model'] ?></h2>
+                <ul class="car-info">
+                    <li><strong><?= $escaper->escapeHtmlAttr(__('Year:')) ?></strong> <?= $car['year'] ?></li>
+                    <li><strong><?= $escaper->escapeHtmlAttr(__('Make:')) ?></strong> <?= $car['make'] ?></li>
+                    <li><strong><?= $escaper->escapeHtmlAttr(__('MPG:')) ?></strong> <?= $car['mpg'] ?></li>
+                    <li><strong><?= $escaper->escapeHtmlAttr(__('Price:')) ?></strong> <?= $block->getFormattedPrice($car['price']) ?></li>
+                    <li><strong><?= $escaper->escapeHtmlAttr(__('Seats:')) ?></strong> <?= $car['seats'] ?></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
+<script type="text/javascript">
+    require(
+        ['jquery', 'mage/mage'],
+        function($){
+            $('#form-car-profile-validate').mage('validation', {});
+        }
+    );
+</script>
